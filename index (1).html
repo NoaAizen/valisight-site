@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VailSight — Clarity in Every Condition</title>
+<meta name="description" content="VailSight — resilient perception in harsh visibility conditions. A compact multi-sensor fusion system for degraded visual environments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Saira:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#04060d;
+    --bg-2:#070b16;
+    --panel:rgba(16,24,42,.55);
+    --panel-solid:#0c1526;
+    --border:rgba(96,132,190,.16);
+    --border-blue:rgba(74,163,232,.35);
+    --border-green:rgba(52,214,143,.32);
+    --blue:#3ea6ff;
+    --blue-bright:#69c3ff;
+    --green:#2fd980;
+    --green-bright:#5cf0a6;
+    --text:#e9eff8;
+    --muted:#93a3bd;
+    --muted-dim:#6b7a94;
+    --amber:#f0b429;
+    --font-display:"Saira Condensed",sans-serif;
+    --font-head:"Saira",sans-serif;
+    --font-body:"Inter",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ambient background */
+  .bg-fx{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 15% -5%, rgba(62,166,255,.10), transparent 60%),
+    radial-gradient(800px 700px at 90% 20%, rgba(47,217,128,.07), transparent 55%),
+    radial-gradient(1000px 800px at 50% 120%, rgba(62,166,255,.06), transparent 60%),
+    linear-gradient(180deg,#04060d 0%,#060a14 100%);}
+  .grid-fx{position:fixed;inset:0;z-index:-1;opacity:.35;
+    background-image:linear-gradient(rgba(96,132,190,.055) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(96,132,190,.055) 1px,transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 80%);}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  section{position:relative}
+
+  /* ---------- NAV ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;transition:background .35s,backdrop-filter .35s,border-color .35s;
+    border-bottom:1px solid transparent}
+  nav.scrolled{background:rgba(5,8,16,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .nav-brand .mark{width:30px;height:30px}
+  .nav-word{font-family:var(--font-head);font-weight:700;letter-spacing:.22em;font-size:16px}
+  .nav-word b{background:linear-gradient(90deg,#fff,#cfe4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-word span{color:var(--blue);font-weight:500}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.03em;transition:color .2s;position:relative}
+  .nav-links a:hover{color:var(--text)}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1.5px;background:var(--blue);transition:width .25s}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{padding:9px 18px;border-radius:8px;background:linear-gradient(120deg,var(--blue),#2b7fd6);
+    color:#fff !important;font-weight:600;font-size:13px;letter-spacing:.02em;
+    box-shadow:0 6px 20px -8px rgba(62,166,255,.7);transition:transform .2s,box-shadow .2s}
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px -8px rgba(62,166,255,.9)}
+  .nav-cta::after{display:none}
+  .nav-toggle{display:none;background:none;border:none;color:var(--text);cursor:pointer}
+
+  /* ---------- HERO ---------- */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:80px 24px 70px;position:relative}
+  .hero .logo-lockup{display:flex;flex-direction:column;align-items:center;gap:14px;
+    opacity:0;transform:translateY(24px);animation:rise .9s .1s forwards cubic-bezier(.2,.7,.2,1)}
+  .hero .mark-lg{width:76px;height:76px;filter:drop-shadow(0 8px 30px rgba(62,166,255,.5))}
+  .hero-word{font-family:var(--font-head);font-weight:700;letter-spacing:.34em;font-size:clamp(30px,6vw,54px);
+    display:flex}
+  .hero-word b{background:linear-gradient(90deg,#ffffff 30%,#bcd9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-word span{color:var(--blue);font-weight:500;
+    background:linear-gradient(90deg,#3ea6ff,#7fd0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-tagline{font-family:var(--font-head);letter-spacing:.42em;font-size:11px;color:var(--muted-dim);
+    text-transform:uppercase;padding-top:2px}
+  .hero h1{font-family:var(--font-display);font-weight:800;text-transform:uppercase;
+    font-size:clamp(34px,7vw,68px);line-height:.98;letter-spacing:.01em;margin-top:40px;
+    opacity:0;transform:translateY(24px);animation:rise .9s .35s forwards cubic-bezier(.2,.7,.2,1)}
+  .hero h1 .accent{background:linear-gradient(120deg,var(--blue-bright),var(--green-bright));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .sub{font-family:var(--font-head);letter-spacing:.28em;text-transform:uppercase;
+    color:var(--blue);font-size:clamp(11px,1.6vw,15px);font-weight:600;margin-top:22px;
+    opacity:0;transform:translateY(24px);animation:rise .9s .5s forwards cubic-bezier(.2,.7,.2,1)}
+  .hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;justify-content:center;
+    opacity:0;transform:translateY(24px);animation:rise .9s .65s forwards cubic-bezier(.2,.7,.2,1)}
+  .btn{padding:14px 28px;border-radius:10px;font-family:var(--font-head);font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;font-size:13px;text-decoration:none;
+    display:inline-flex;align-items:center;gap:9px;transition:transform .22s,box-shadow .22s,background .22s,border-color .22s;cursor:pointer}
+  .btn-primary{background:linear-gradient(120deg,var(--blue),#2b7fd6);color:#fff;
+    box-shadow:0 10px 30px -10px rgba(62,166,255,.8)}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px -10px rgba(62,166,255,1)}
+  .btn-ghost{border:1px solid var(--border-green);color:var(--green-bright);background:rgba(47,217,128,.05)}
+  .btn-ghost:hover{transform:translateY(-3px);background:rgba(47,217,128,.12);border-color:var(--green)}
+  .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--muted-dim);
+    font-size:11px;letter-spacing:.25em;text-transform:uppercase;display:flex;flex-direction:column;
+    align-items:center;gap:8px;animation:fadein 1s 1.2s both}
+  .scroll-hint .dot{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:bob 1.6s infinite}
+
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(6px);opacity:1}}
+
+  /* ---------- SECTION SHELL ---------- */
+  .section-pad{padding:88px 0}
+  .eyebrow{font-family:var(--font-head);letter-spacing:.3em;text-transform:uppercase;font-size:12px;
+    font-weight:600;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow.blue{color:var(--blue)}
+  .eyebrow.green{color:var(--green)}
+  .eyebrow .ic{width:16px;height:16px;display:inline-block}
+  .section-title{font-family:var(--font-display);text-transform:uppercase;font-weight:800;
+    font-size:clamp(26px,4vw,40px);line-height:1.02;letter-spacing:.01em;margin:14px 0}
+  .section-title.center{text-align:center}
+  .section-lead{color:var(--muted);max-width:720px}
+  .center-head{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:52px}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}.reveal.d5{transition-delay:.4s}
+
+  /* card */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:30px 30px 32px;
+    backdrop-filter:blur(6px);position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
+  .card::before{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;pointer-events:none;
+    background:linear-gradient(160deg,rgba(120,160,220,.28),transparent 40%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
+  .card:hover{transform:translateY(-4px);box-shadow:0 24px 60px -30px rgba(0,0,0,.9)}
+  .card.blue:hover{border-color:var(--border-blue);box-shadow:0 24px 60px -26px rgba(62,166,255,.4)}
+  .card.green:hover{border-color:var(--border-green);box-shadow:0 24px 60px -26px rgba(47,217,128,.4)}
+
+  /* problem/solution */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .list{list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:16px}
+  .list li{display:flex;gap:13px;color:var(--muted);font-size:15px}
+  .list li .bullet{flex:0 0 20px;width:20px;height:20px;margin-top:2px}
+  .list li strong{color:var(--text);font-weight:600}
+  .result-tag{margin-top:6px;color:var(--text);font-weight:600}
+
+  /* ---------- FUSION DIAGRAM ---------- */
+  .fusion-card{background:linear-gradient(160deg,#0a1120,#06090f);border:1px solid var(--border);
+    border-radius:20px;padding:34px 30px;position:relative;overflow:hidden}
+  .fusion-head{font-family:var(--font-display);text-transform:uppercase;font-weight:800;
+    font-size:clamp(22px,3.4vw,34px);text-align:right;letter-spacing:.02em;margin-bottom:8px}
+  .fusion-head .g{background:linear-gradient(120deg,#fff,#9fc8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .fusion-diagram{width:100%;height:auto;display:block}
+  .flow-dot{fill:var(--blue)}
+
+  /* ---------- DIFFERENTIATORS grid ---------- */
+  .tri{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:26px}
+  .diff-item{display:flex;gap:14px;margin-bottom:22px}
+  .diff-item:last-child{margin-bottom:0}
+  .diff-item .ck{flex:0 0 24px;width:24px;height:24px;margin-top:2px}
+  .diff-item h4{font-family:var(--font-head);font-weight:600;font-size:16px;color:var(--text);margin-bottom:3px}
+  .diff-item p{color:var(--muted);font-size:14px}
+  .trac-item{display:flex;gap:13px;align-items:flex-start;margin-bottom:18px}
+  .trac-item .n{flex:0 0 26px;width:26px;height:26px;border-radius:7px;background:rgba(62,166,255,.14);
+    border:1px solid var(--border-blue);display:grid;place-items:center;color:var(--blue);font-size:13px;margin-top:1px}
+  .trac-item p{font-weight:600;color:var(--text);font-size:15px}
+  .node-card{background:linear-gradient(180deg,rgba(47,217,128,.08),rgba(10,20,15,.4));
+    border:1px solid var(--border-green);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+  .node-vis{flex:1;min-height:210px;position:relative;display:grid;place-items:center;padding:20px}
+  .node-label{text-align:center;font-family:var(--font-head);letter-spacing:.2em;text-transform:uppercase;
+    color:var(--green-bright);font-size:12px;font-weight:600;padding:14px;border-top:1px solid var(--border-green);
+    background:rgba(47,217,128,.06)}
+
+  /* ---------- NETWORK OF SENSES ---------- */
+  .vision-band{border:1px solid var(--border-green);border-radius:22px;
+    background:radial-gradient(circle at 50% 45%,rgba(47,217,128,.10),transparent 60%),linear-gradient(180deg,#071410,#05090f);
+    padding:44px 30px 30px}
+  .network-svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto}
+
+  /* ---------- TARGET APPS ---------- */
+  .apps-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+  .app{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:8px}
+  .app .ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+    border:1.5px solid var(--border-blue);background:radial-gradient(circle,rgba(62,166,255,.12),transparent 70%);
+    transition:transform .3s,box-shadow .3s,border-color .3s}
+  .app.exp .ring{border-color:var(--border-green);background:radial-gradient(circle,rgba(47,217,128,.12),transparent 70%)}
+  .app:hover .ring{transform:translateY(-5px) scale(1.05)}
+  .app.blue:hover .ring{box-shadow:0 12px 30px -10px rgba(62,166,255,.7)}
+  .app.exp:hover .ring{box-shadow:0 12px 30px -10px rgba(47,217,128,.7)}
+  .app .ring svg{width:28px;height:28px}
+  .app .name{font-family:var(--font-head);font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;line-height:1.25}
+  .tier{font-family:var(--font-head);font-size:10px;letter-spacing:.16em;font-weight:600;padding:3px 10px;border-radius:5px;text-transform:uppercase}
+  .tier.initial{color:var(--blue);background:rgba(62,166,255,.12)}
+  .tier.expansion{color:var(--green);background:rgba(47,217,128,.12)}
+
+  /* ---------- TEAM ---------- */
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .member{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px 22px;
+    text-align:center;transition:transform .3s,border-color .3s,box-shadow .3s}
+  .member:hover{transform:translateY(-5px);border-color:var(--border-blue);box-shadow:0 20px 44px -24px rgba(62,166,255,.5)}
+  .avatar{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(62,166,255,.2),rgba(47,217,128,.14));border:1px solid var(--border-blue)}
+  .avatar svg{width:26px;height:26px;color:var(--blue-bright)}
+  .member h4{font-family:var(--font-head);font-weight:700;font-size:17px}
+  .member .role{color:var(--blue);font-family:var(--font-head);font-weight:600;font-size:11.5px;
+    letter-spacing:.12em;text-transform:uppercase;margin:5px 0 12px}
+  .member p{color:var(--muted);font-size:13.5px}
+
+  /* ---------- INVESTMENT ---------- */
+  .invest{border:1px solid var(--border-green);border-radius:20px;text-align:center;padding:52px 30px;
+    background:radial-gradient(circle at 50% 0%,rgba(47,217,128,.12),transparent 60%),linear-gradient(180deg,#08130f,#05090f)}
+  .invest .eyebrow{justify-content:center;color:var(--green);margin-bottom:12px}
+  .invest .amount{font-family:var(--font-display);text-transform:uppercase;font-weight:800;
+    font-size:clamp(30px,5vw,52px);background:linear-gradient(120deg,#fff,#7cf3ad);
+    -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:16px;letter-spacing:.01em}
+  .invest p{color:var(--muted);max-width:680px;margin:0 auto}
+
+  /* ---------- LOOKING FOR ---------- */
+  .looking{background:linear-gradient(120deg,var(--blue),#2b7fd6);border-radius:16px;padding:26px 30px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 40px;text-align:center}
+  .looking .lbl{font-family:var(--font-head);letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+    color:#eaf4ff;font-size:13px;width:100%}
+  .looking .chip{color:#fff;font-family:var(--font-head);font-weight:600;font-size:15px;letter-spacing:.04em;
+    position:relative;padding-bottom:4px}
+  .looking .chip::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:0;height:2px;background:#fff;transition:width .25s}
+  .looking .chip:hover::after{width:100%}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  .contact{text-align:center;padding-top:20px}
+  .contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:36px 0 0}
+  .cc{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px 18px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:var(--text);
+    transition:transform .3s,border-color .3s,box-shadow .3s}
+  .cc:hover{transform:translateY(-4px);border-color:var(--border-blue);box-shadow:0 18px 40px -22px rgba(62,166,255,.55)}
+  .cc svg{width:24px;height:24px;color:var(--blue-bright)}
+  .cc .k{font-family:var(--font-head);letter-spacing:.16em;text-transform:uppercase;font-size:10.5px;color:var(--muted-dim)}
+  .cc .v{font-weight:600;font-size:14.5px}
+  .footer-cta{margin-top:44px}
+  footer{border-top:1px solid var(--border);margin-top:70px;padding:26px 24px;text-align:center;
+    color:var(--muted-dim);font-size:12.5px;letter-spacing:.04em}
+  footer .fword{font-family:var(--font-head);letter-spacing:.2em;color:var(--muted)}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:920px){
+    .nav-links{display:none}
+    .nav-toggle{display:block}
+    .two-col{grid-template-columns:1fr}
+    .tri{grid-template-columns:1fr}
+    .apps-grid{grid-template-columns:repeat(3,1fr)}
+    .team-grid{grid-template-columns:1fr 1fr}
+    .contact-cards{grid-template-columns:1fr}
+    .fusion-head{text-align:center}
+  }
+  @media(max-width:560px){
+    .section-pad{padding:64px 0}
+    .apps-grid{grid-template-columns:repeat(2,1fr)}
+    .team-grid{grid-template-columns:1fr}
+    .card{padding:24px}
+    .hero h1{margin-top:28px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+    .reveal{opacity:1;transform:none}
+    .hero .logo-lockup,.hero h1,.hero .sub,.hero-actions{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="grid-fx"></div>
+
+<!-- ===== SVG defs (logo mark reused) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eaf3ff"/><stop offset="1" stop-color="#9cc4ef"/>
+    </linearGradient>
+    <linearGradient id="swoosh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7fd0ff"/><stop offset="1" stop-color="#2b7fd6"/>
+    </linearGradient>
+    <symbol id="logomark" viewBox="0 0 100 100">
+      <path d="M18 24 L50 82 L82 24 L68 24 L50 56 L32 24 Z" fill="url(#vGrad)"/>
+      <path d="M60 20 C74 14 88 18 96 8 C90 30 76 34 64 30 Z" fill="url(#swoosh)" opacity=".95"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="top">
+  <div class="logo-lockup">
+    <svg class="mark-lg"><use href="#logomark"/></svg>
+    <div class="hero-word"><b>VAIL</b><span>SIGHT</span></div>
+    <div class="hero-tagline">Clarity in Every Condition</div>
+  </div>
+  <h1>When Vision Fails,<br><span class="accent">VailSight Sees.</span></h1>
+  <p class="sub">Resilient Perception in Harsh Visibility Conditions</p>
+</header>
+
+<!-- ===== PROBLEM / SOLUTION ===== -->
+<section class="section-pad" id="problem">
+  <div class="wrap two-col">
+    <div class="card blue reveal">
+      <div class="eyebrow blue">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        The Problem
+      </div>
+      <ul class="list">
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          Conventional optical vision systems struggle in fog, dust, darkness, and other degraded conditions.</li>
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          Existing solutions can be heavy, bulky, and may still not provide all the information the user needs.</li>
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><path d="M12 3L2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+          When one sensing modality is affected by conditions, the system must compensate to maintain awareness.</li>
+        <li style="display:block"><span class="result-tag">Result:</span><br>
+          <span style="color:var(--muted)">Individual platforms lose critical perception when it matters most.</span></li>
+      </ul>
+    </div>
+
+    <div class="card green reveal d1">
+      <div class="eyebrow green">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        Our Solution
+      </div>
+      <ul class="list">
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#2fd980" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+          VailSight is a compact vision and sensing system that provides situational awareness in degraded visual environments and additionally detects objects, determines distance, and measures temperature.</li>
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#2fd980" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+          Maintains reliable environmental awareness when conventional vision is compromised.</li>
+        <li><svg class="bullet" viewBox="0 0 24 24" fill="none" stroke="#2fd980" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+          Multiple sensing modalities work together to provide continuous and reliable perception.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI FUSION ===== -->
+<section class="section-pad" id="fusion" style="padding-top:20px">
+  <div class="wrap">
+    <div class="fusion-card reveal">
+      <div class="fusion-head"><span class="g">VAILSIGHT AI FUSION</span></div>
+      <svg class="fusion-diagram" viewBox="0 0 1000 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="line-b" x1="0" x2="1"><stop offset="0" stop-color="#2b6fb0" stop-opacity=".2"/><stop offset="1" stop-color="#3ea6ff"/></linearGradient>
+          <linearGradient id="scene" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4656"/><stop offset="1" stop-color="#161d28"/></linearGradient>
+          <radialGradient id="ai-glow"><stop offset="0" stop-color="#3ea6ff" stop-opacity=".5"/><stop offset="1" stop-color="#3ea6ff" stop-opacity="0"/></radialGradient>
+        </defs>
+
+        <!-- sensor labels + icons -->
+        <g font-family="Saira,sans-serif" font-size="15" fill="#cdd8e8">
+          <!-- RGB -->
+          <rect x="40" y="52" width="46" height="40" rx="7" fill="#0f1826" stroke="#31425c"/>
+          <circle cx="63" cy="72" r="11" fill="#1a2637" stroke="#4a6079"/><circle cx="63" cy="72" r="5" fill="#3ea6ff" opacity=".7"/>
+          <text x="100" y="70">RGB</text><text x="100" y="86" font-size="11" fill="#69c3ff">[ TEACHER ]</text>
+          <!-- THERMAL -->
+          <rect x="40" y="150" width="46" height="40" rx="7" fill="#0f1826" stroke="#31425c"/>
+          <circle cx="63" cy="170" r="11" fill="#241722" stroke="#7a4a60"/><circle cx="63" cy="170" r="5" fill="#f0803a" opacity=".8"/>
+          <text x="100" y="168">THERMAL</text><text x="100" y="184" font-size="11" fill="#93a3bd">CAMERA</text>
+          <!-- RADAR -->
+          <rect x="40" y="248" width="46" height="40" rx="7" fill="#0f1826" stroke="#31425c"/>
+          <path d="M52 278 l22 0 M55 270 l16 0 M58 262 l10 0" stroke="#2fd980" stroke-width="2" fill="none"/>
+          <text x="100" y="276">RADAR</text>
+        </g>
+
+        <!-- connectors to AI -->
+        <g class="flow" fill="none" stroke="url(#line-b)" stroke-width="2">
+          <path d="M200 72 H330"/><path d="M200 170 H330"/><path d="M200 268 H330"/>
+          <path d="M200 72 Q300 72 315 150" opacity=".5"/><path d="M200 268 Q300 268 315 190" opacity=".5"/>
+        </g>
+
+        <!-- AI box -->
+        <circle cx="390" cy="170" r="70" fill="url(#ai-glow)"/>
+        <rect x="335" y="120" width="110" height="100" rx="16" fill="#0c1626" stroke="#3ea6ff" stroke-opacity=".5"/>
+        <g stroke="#3ea6ff" stroke-opacity=".55" fill="none" stroke-width="1.2">
+          <circle cx="390" cy="150" r="5"/><circle cx="365" cy="180" r="4"/><circle cx="415" cy="185" r="4"/><circle cx="390" cy="200" r="4"/>
+          <path d="M390 155 L367 177 M390 155 L412 181 M369 183 L387 197 M411 188 L393 198"/>
+        </g>
+        <text x="390" y="176" font-family="Saira,sans-serif" font-weight="700" font-size="22" fill="#eaf3ff" text-anchor="middle">AI</text>
+
+        <!-- fusion funnel -->
+        <text x="530" y="112" font-family="Saira,sans-serif" font-size="14" fill="#93a3bd" letter-spacing="2" text-anchor="middle">FUSION</text>
+        <g stroke-width="2" fill="none">
+          <path d="M445 150 C500 150 505 168 560 170" stroke="#3ea6ff" opacity=".8"/>
+          <path d="M445 170 C500 170 505 170 560 170" stroke="#2fd980" opacity=".8"/>
+          <path d="M445 190 C500 190 505 172 560 170" stroke="#f0803a" opacity=".7"/>
+        </g>
+        <circle cx="565" cy="170" r="10" fill="none" stroke="#3ea6ff" stroke-width="2"/>
+        <circle cx="565" cy="170" r="3.5" fill="#3ea6ff"/>
+
+        <!-- scene -->
+        <rect x="600" y="60" width="370" height="220" rx="14" fill="url(#scene)" stroke="#31425c"/>
+        <path d="M600 280 L785 175 L970 280 Z" fill="#2b3543" opacity=".5"/>
+        <path d="M785 175 L785 280" stroke="#5b6b7e" stroke-width="2" stroke-dasharray="7 9" opacity=".6"/>
+        <!-- person box -->
+        <rect x="655" y="150" width="60" height="105" rx="4" fill="none" stroke="#2fd980" stroke-width="2"/>
+        <rect x="640" y="128" width="120" height="20" rx="4" fill="#0c1626" stroke="#2fd980" stroke-opacity=".6"/>
+        <text x="700" y="142" font-family="Saira,sans-serif" font-size="12" fill="#dff7ea" text-anchor="middle">Person · 10m · 36°</text>
+        <ellipse cx="685" cy="205" rx="16" ry="42" fill="#1b2531"/><circle cx="685" cy="168" r="11" fill="#233040"/>
+        <!-- car box -->
+        <rect x="850" y="168" width="86" height="66" rx="4" fill="none" stroke="#3ea6ff" stroke-width="2"/>
+        <rect x="838" y="146" width="112" height="20" rx="4" fill="#0c1626" stroke="#3ea6ff" stroke-opacity=".6"/>
+        <text x="894" y="160" font-family="Saira,sans-serif" font-size="12" fill="#e0efff" text-anchor="middle">Car · 24m · 42°</text>
+        <rect x="862" y="188" width="62" height="34" rx="7" fill="#222d3b"/><rect x="874" y="180" width="38" height="16" rx="5" fill="#2b3846"/>
+
+        <!-- animated pulses along the flow -->
+        <circle class="flow-dot" r="3.5">
+          <animateMotion dur="2.6s" repeatCount="indefinite" path="M200 72 H330"/>
+        </circle>
+        <circle class="flow-dot" r="3.5" fill="#f0803a">
+          <animateMotion dur="2.6s" begin=".6s" repeatCount="indefinite" path="M200 170 H330"/>
+        </circle>
+        <circle class="flow-dot" r="3.5" fill="#2fd980">
+          <animateMotion dur="2.6s" begin="1.2s" repeatCount="indefinite" path="M200 268 H330"/>
+        </circle>
+        <circle r="3.5" fill="#69c3ff">
+          <animateMotion dur="2.2s" repeatCount="indefinite" path="M445 170 C500 170 505 170 560 170"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIFFERENTIATORS / TRACTION / NODE ===== -->
+<section class="section-pad" style="padding-top:20px">
+  <div class="wrap tri">
+    <!-- what makes us different -->
+    <div class="card blue reveal">
+      <div class="eyebrow blue" style="margin-bottom:20px">What Makes Us Different</div>
+      <div class="diff-item">
+        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <div><h4>Compact Multi-Sensor</h4><p>Resilient sensing designed for size and weight constrained platforms.</p></div>
+      </div>
+      <div class="diff-item">
+        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <div><h4>Independent Processing</h4><p>Each sensor's data is processed independently before fusion to preserve its unique strengths.</p></div>
+      </div>
+      <div class="diff-item">
+        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="#3ea6ff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <div><h4>Complementary Synergy</h4><p>Combines modalities to provide a more complete understanding of the environment.</p></div>
+      </div>
+    </div>
+
+    <!-- traction -->
+    <div class="card green reveal d1">
+      <div class="eyebrow green" style="margin-bottom:22px">Traction &amp; Validation</div>
+      <div class="trac-item"><span class="n">✓</span><p>Working physical prototype demonstrated</p></div>
+      <div class="trac-item"><span class="n">✓</span><p>Selected for MAFAT BUILD 2026</p></div>
+      <div class="trac-item"><span class="n">✓</span><p>Sensor integration and live testing underway</p></div>
+      <div class="trac-item"><span class="n">✓</span><p>Preparing for defense field pilots</p></div>
+    </div>
+
+    <!-- future node -->
+    <div class="node-card reveal d2">
+      <div class="node-vis">
+        <svg viewBox="0 0 220 150" width="100%">
+          <defs><linearGradient id="dev" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#243040"/><stop offset="1" stop-color="#0d141e"/></linearGradient></defs>
+          <ellipse cx="110" cy="130" rx="78" ry="10" fill="#2fd980" opacity=".12"/>
+          <rect x="34" y="52" width="152" height="62" rx="12" fill="url(#dev)" stroke="#3a4a5e" stroke-width="1.5"/>
+          <rect x="46" y="64" width="40" height="40" rx="8" fill="#0a1018" stroke="#4a6079"/>
+          <circle cx="66" cy="84" r="13" fill="#141d29"/><circle cx="66" cy="84" r="6" fill="#3ea6ff" opacity=".7"/>
+          <rect x="96" y="64" width="40" height="40" rx="8" fill="#0a1018" stroke="#7a4a60"/>
+          <circle cx="116" cy="84" r="13" fill="#1e141b"/><circle cx="116" cy="84" r="6" fill="#f0803a" opacity=".75"/>
+          <rect x="146" y="66" width="30" height="36" rx="6" fill="#0a1018" stroke="#3a5a48"/>
+          <path d="M154 90 l14 0 M157 84 l8 0" stroke="#2fd980" stroke-width="1.6"/>
+          <rect x="70" y="114" width="80" height="9" rx="4" fill="#1a2431"/>
+        </svg>
+      </div>
+      <div class="node-label">Future Perception Node</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LONG TERM VISION ===== -->
+<section class="section-pad" id="vision">
+  <div class="wrap">
+    <div class="vision-band reveal">
+      <div style="text-align:center;max-width:760px;margin:0 auto 10px">
+        <div class="eyebrow green" style="justify-content:center;margin-bottom:14px">Long-Term Vision</div>
+        <h2 class="section-title" style="margin-top:0">Network of Senses</h2>
+        <p class="section-lead" style="margin:0 auto">Expanding from individual perception units to a <span style="color:var(--green-bright)">cooperative perception network</span> where moving and fixed platforms share environmental understanding in real time.</p>
+      </div>
+      <svg class="network-svg" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="core"><stop offset="0" stop-color="#43e79a"/><stop offset="1" stop-color="#1f7d52"/></radialGradient>
+        </defs>
+        <!-- links -->
+        <g stroke="#2fd980" stroke-width="1.6" stroke-dasharray="5 7" opacity=".55" fill="none">
+          <path d="M170 90 L350 180"/><path d="M530 90 L350 180"/>
+          <path d="M170 270 L350 180"/><path d="M530 270 L350 180"/>
+        </g>
+        <g stroke="#2fd980" stroke-width="1.4" opacity=".2" fill="none">
+          <path d="M170 90 C260 40 440 40 530 90"/><path d="M170 270 C260 320 440 320 530 270"/>
+        </g>
+        <!-- core -->
+        <circle cx="350" cy="180" r="52" fill="url(#core)">
+          <animate attributeName="r" values="50;56;50" dur="3.4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="350" cy="180" r="30" fill="#0a1a13"/>
+        <path d="M350 165 l14 22 -14 -7 -14 7 z" fill="#43e79a"/>
+        <!-- node template -->
+        <g font-family="Saira,sans-serif" font-size="13" fill="#cdd8e8" text-anchor="middle">
+          <g>
+            <circle cx="170" cy="90" r="26" fill="#0d1c15" stroke="#2fd980" stroke-width="1.6"/>
+            <path d="M158 90 h24 M170 82 v16 M162 84 l16 12 M178 84 l-16 12" stroke="#5cf0a6" stroke-width="1.4" fill="none"/>
+            <text x="170" y="140">UAVs</text>
+          </g>
+          <g>
+            <circle cx="530" cy="90" r="26" fill="#0d1c15" stroke="#2fd980" stroke-width="1.6"/>
+            <rect x="521" y="81" width="18" height="18" rx="3" fill="none" stroke="#5cf0a6" stroke-width="1.4"/><path d="M525 87h10M525 91h10" stroke="#5cf0a6" stroke-width="1.2"/>
+            <text x="530" y="140">Fixed Platforms</text>
+          </g>
+          <g>
+            <circle cx="170" cy="270" r="26" fill="#0d1c15" stroke="#2fd980" stroke-width="1.6"/>
+            <circle cx="170" cy="264" r="6" fill="none" stroke="#5cf0a6" stroke-width="1.4"/><path d="M160 282 c0-8 20-8 20 0" stroke="#5cf0a6" stroke-width="1.4" fill="none"/>
+            <text x="170" y="320">Soldiers</text>
+          </g>
+          <g>
+            <circle cx="530" cy="270" r="26" fill="#0d1c15" stroke="#2fd980" stroke-width="1.6"/>
+            <path d="M519 274 h22 l-3 -8 h-16 z" fill="none" stroke="#5cf0a6" stroke-width="1.4"/><circle cx="524" cy="278" r="2.4" fill="#5cf0a6"/><circle cx="536" cy="278" r="2.4" fill="#5cf0a6"/>
+            <text x="530" y="320">Vehicles / UGVs</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TARGET APPLICATIONS ===== -->
+<section class="section-pad" id="applications" style="padding-top:20px">
+  <div class="wrap">
+    <div class="center-head reveal">
+      <div class="eyebrow blue">Target Applications</div>
+    </div>
+    <div class="apps-grid">
+      <div class="app blue reveal">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#69c3ff" stroke-width="1.7"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div>
+        <div class="name">Defense Vehicles</div><span class="tier initial">Initial</span>
+      </div>
+      <div class="app blue reveal d1">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#69c3ff" stroke-width="1.6"><path d="M12 11v9M6 20h12M4 8h16M12 4v4M6 8l-2 3M18 8l2 3"/></svg></div>
+        <div class="name">UAVs &amp; UGVs</div><span class="tier initial">Initial</span>
+      </div>
+      <div class="app blue reveal d2">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#69c3ff" stroke-width="1.7"><circle cx="12" cy="7" r="4"/><path d="M5 21c0-4 3-6 7-6s7 2 7 6"/></svg></div>
+        <div class="name">Dismounted Soldiers</div><span class="tier initial">Initial</span>
+      </div>
+      <div class="app exp reveal d2">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#5cf0a6" stroke-width="1.7"><path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/></svg></div>
+        <div class="name">Critical Infrastructure</div><span class="tier expansion">Expansion</span>
+      </div>
+      <div class="app exp reveal d3">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#5cf0a6" stroke-width="1.6"><rect x="3" y="8" width="18" height="10" rx="3"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/><path d="M7 8V5h10v3"/></svg></div>
+        <div class="name">Autonomous Platforms</div><span class="tier expansion">Expansion</span>
+      </div>
+      <div class="app exp reveal d4">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="#5cf0a6" stroke-width="1.7"><path d="M12 3v6M12 21a6 6 0 006-6c0-4-6-9-6-9M12 21a6 6 0 01-6-6"/></svg></div>
+        <div class="name">Search &amp; Rescue</div><span class="tier expansion">Expansion</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section class="section-pad" id="team" style="padding-top:20px">
+  <div class="wrap">
+    <div class="center-head reveal">
+      <div class="eyebrow blue">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 1.5-3.5 4-3.5"/></svg>
+        Leadership Team
+      </div>
+    </div>
+    <div class="team-grid">
+      <div class="member reveal"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Yosef Marcus</h4><div class="role">Founder &amp; CEO</div><p>Business leadership, operational field experience, search &amp; rescue command.</p></div>
+      <div class="member reveal d1"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Noa Mageni</h4><div class="role">CTO</div><p>Embedded systems, image processing, sensor integration.</p></div>
+      <div class="member reveal d2"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Moshe Chaggai Ashush</h4><div class="role">Technical Product Lead</div><p>Computer science, product development, frontline special-forces experience.</p></div>
+      <div class="member reveal"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Yehonatan Fertouk</h4><div class="role">Hardware &amp; Systems</div><p>M.Sc. Electrical Engineering, hardware architecture, embedded electronics, sensor integration.</p></div>
+      <div class="member reveal d1"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Yael Moyal</h4><div class="role">Localization &amp; Calibration</div><p>Localization, sensor calibration, IMU integration.</p></div>
+      <div class="member reveal d2"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        <h4>Yaakov Uzan</h4><div class="role">Embedded &amp; Systems Engineer</div><p>System architecture, deep embedded design, creative problem-solving, frontline combat.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INVESTMENT ===== -->
+<section class="section-pad" id="invest" style="padding-top:20px">
+  <div class="wrap">
+    <div class="invest reveal">
+      <div class="eyebrow green">Investment Ask</div>
+      <div class="amount">Seeking $650K – $750K Pre-Seed</div>
+      <p>To fund the transition from prototype to product, complete field validation, expand the team, and secure initial defense pilot deployments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LOOKING FOR ===== -->
+<section style="padding:0 0 20px">
+  <div class="wrap">
+    <div class="looking reveal">
+      <div class="lbl">We Are Looking For</div>
+      <span class="chip">Strategic Investors</span>
+      <span class="chip">Pilot Partners</span>
+      <span class="chip">Defense Integrators</span>
+      <span class="chip">Technology Partners</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="section-pad" id="contact" style="padding-top:24px">
+  <div class="wrap contact">
+    <div class="reveal">
+      <a class="btn btn-primary" href="https://forms.gle/pFgQsLo4hnb8pfzM9" target="_blank" rel="noopener" style="font-size:15px;padding:16px 34px">
+        Contact Us
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="contact-cards reveal d1">
+      <a class="cc" href="mailto:yosef@vailsight.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>
+        <span class="k">Email</span><span class="v">yosef@vailsight.com</span>
+      </a>
+      <a class="cc" href="tel:+9720522679594">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-3 2c1 3 3 5 6 6l2-3 5 2v4c0 1-1 2-2 2A16 16 0 013 6c0-1 1-2 2-2z"/></svg>
+        <span class="k">Phone</span><span class="v">052-267-9594</span>
+      </a>
+      <div class="cc" style="cursor:default">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span class="k">Location</span><span class="v">Jerusalem, Israel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  // reveal on scroll
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.15,rootMargin:'0px 0px -60px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
